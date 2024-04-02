@@ -138,33 +138,3 @@ ggplot(combined_data, aes(x = as.Date(paste(year, month, "31", sep = "-")), y = 
       #+increase text size
   #geom_vline(xintercept=as.numeric(as.Date("2022-02-27")))
 
-
-### detrending
-
-filtered_df <- combined_data[combined_data$year < 2020, ]
-
-# Fit a linear regression model
-lm_model <- lm(quantity ~ as.factor(month), data = filtered_df)
-
-# Predict the trend component
-trend <- predict(lm_model, newdata = data.frame(month = c(1:12,1:12,1:12,1:12,1:12,1:12)))
-
-# Subtract the trend component from the original data
-combined_data$detrended_quantity <- combined_data$quantity - trend
-
-ggplot(combined_data, aes(x = as.Date(paste(year, month, "01", sep = "-")), y = detrended_quantity)) +
-  geom_line() +
-  labs(
-    x = "Date",
-    y = "Quantity",
-    title = "Quantity Over Time"
-  ) +
-  scale_x_date(
-    date_labels = "%b %Y",
-    date_breaks = "3 months",  # Adjust the interval as needed
-    limits = as.Date(c("2017-01-01", "2022-12-31"))  # Set the date range
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_vline(xintercept=as.numeric(as.Date("2022-02-27"))) +
-  geom_hline(yintercept=0)
